@@ -11,6 +11,7 @@ import com.github.javadev.exceltojson.pojo.ExcelWorksheet;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -76,17 +77,17 @@ public class ExcelToJsonConverter {
 
     private Object cellToObject(Cell cell) {
 
-        int type = cell.getCellType();
+        CellType type = cell.getCellType();
 
-        if (type == Cell.CELL_TYPE_STRING) {
+        if (type == CellType.STRING) {
             return cleanString(cell.getStringCellValue());
         }
 
-        if (type == Cell.CELL_TYPE_BOOLEAN) {
+        if (type == CellType.BOOLEAN) {
             return cell.getBooleanCellValue();
         }
 
-        if (type == Cell.CELL_TYPE_NUMERIC) {
+        if (type == CellType.NUMERIC) {
 
             if (cell.getCellStyle().getDataFormatString().contains("%")) {
                 return cell.getNumericCellValue() * 100;
@@ -95,11 +96,11 @@ public class ExcelToJsonConverter {
             return numeric(cell);
         }
 
-        if (type == Cell.CELL_TYPE_FORMULA) {
+        if (type == CellType.FORMULA) {
             switch (cell.getCachedFormulaResultType()) {
-                case Cell.CELL_TYPE_NUMERIC:
+                case NUMERIC:
                     return numeric(cell);
-                case Cell.CELL_TYPE_STRING:
+                case STRING:
                     return cleanString(cell.getRichStringCellValue().toString());
             }
         }
