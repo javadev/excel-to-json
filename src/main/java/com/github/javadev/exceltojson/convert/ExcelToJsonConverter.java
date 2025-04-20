@@ -1,15 +1,16 @@
 package com.github.javadev.exceltojson.convert;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import com.github.javadev.exceltojson.pojo.ExcelWorkbook;
 import com.github.javadev.exceltojson.pojo.ExcelWorksheet;
 
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.DateUtil;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -25,15 +26,15 @@ public class ExcelToJsonConverter {
         this.config = config;
     }
 
-    public static ExcelWorkbook convert(ExcelToJsonConverterConfig config) throws InvalidFormatException, IOException {
+    public static ExcelWorkbook convert(ExcelToJsonConverterConfig config) throws IOException {
         return new ExcelToJsonConverter(config).convert();
     }
 
     public ExcelWorkbook convert()
-            throws InvalidFormatException, IOException {
+            throws IOException {
         ExcelWorkbook book = new ExcelWorkbook();
 
-        InputStream inp = new FileInputStream(config.getSourceFile());
+        InputStream inp = Files.newInputStream(Paths.get(config.getSourceFile()));
         Workbook wb = WorkbookFactory.create(inp);
 
         book.setFileName(config.getSourceFile());
@@ -114,7 +115,7 @@ public class ExcelToJsonConverter {
     }
 
     private Object numeric(Cell cell) {
-        if (HSSFDateUtil.isCellDateFormatted(cell)) {
+        if (DateUtil.isCellDateFormatted(cell)) {
             if (config.getFormatDate() != null) {
                 return config.getFormatDate().format(cell.getDateCellValue());
             }
